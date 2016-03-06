@@ -51,31 +51,25 @@ static const uint8_t numbertable[] = {
 
 void Adafruit_LEDBackpack::setBrightness(uint8_t b) {
   if (b > 15) b = 15;
-//  Wire.beginTransmission(i2c_addr);
-//  Wire.write(HT16K33_CMD_BRIGHTNESS | b);
-//  Wire.endTransmission();
   wiringPiI2CWrite(wiringPiFd, HT16K33_CMD_BRIGHTNESS | b);
 }
 
 void Adafruit_LEDBackpack::blinkRate(uint8_t b) {
     if (b > 3) b = 0; // turn off if not sure
-//  Wire.beginTransmission(i2c_addr);
-//  Wire.write(HT16K33_BLINK_CMD | HT16K33_BLINK_DISPLAYON | (b << 1));
-//  Wire.endTransmission();
   wiringPiI2CWrite(wiringPiFd, HT16K33_BLINK_CMD | HT16K33_BLINK_DISPLAYON | (b << 1));
 }
 
 Adafruit_LEDBackpack::Adafruit_LEDBackpack(void) {
 }
 
-void Adafruit_LEDBackpack::begin(uint8_t _addr = 0x70) {
+void Adafruit_LEDBackpack::begin(uint8_t _addr,  const char* device) {
   i2c_addr = _addr;
 
-  wiringPiFd = wiringPiI2CSetup(i2c_addr);
+  if(device == nullptr)
+    wiringPiFd = wiringPiI2CSetup(i2c_addr);
+  else
+    wiringPiFd = wiringPiI2CSetupInterface(device, i2c_addr);
 
-//  Wire.beginTransmission(i2c_addr);
-//  Wire.write(0x21);  // turn on oscillator
-//  Wire.endTransmission();
   wiringPiI2CWrite(wiringPiFd, 0x21);  // turn on oscillator
   blinkRate(HT16K33_BLINK_OFF);
   
@@ -83,7 +77,7 @@ void Adafruit_LEDBackpack::begin(uint8_t _addr = 0x70) {
 }
 
 void Adafruit_LEDBackpack::writeDisplay(void) {
-  for (uint8_t i = 0; i < 5; i++)
+  for (uint8_t i = 0; i < 8; i++)
   {
     wiringPiI2CWriteReg16(wiringPiFd, i*2, displaybuffer[i]);
   }

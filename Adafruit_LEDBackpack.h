@@ -45,7 +45,7 @@
 class Adafruit_LEDBackpack {
  public:
   Adafruit_LEDBackpack(void);
-  void begin(uint8_t _addr);
+  void begin(uint8_t _addr = 0x70,  const char* device = nullptr);
   void setBrightness(uint8_t b);
   void blinkRate(uint8_t b);
   void writeDisplay(void);
